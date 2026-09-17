@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Registro de Trabajadores · SNTSA Sección 35</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f5f7;color:#1d2939}
+.wrap{max-width:760px;margin:24px auto;padding:16px}.card{background:white;border-radius:18px;padding:26px;box-shadow:0 8px 30px #00000012}
+.header{text-align:center;border-bottom:3px solid #176b57;padding-bottom:18px;margin-bottom:22px}
+.header h1{margin:8px 0 4px;font-size:24px}.header p{margin:0;color:#667085}
+label{display:block;font-weight:700;margin:17px 0 7px}input,select,textarea{width:100%;padding:13px 14px;border:1px solid #cfd5dc;border-radius:10px;font-size:16px;background:#fff}
+textarea{min-height:90px;resize:vertical}.help{font-size:13px;color:#667085;margin-top:5px}
+button{width:100%;margin-top:24px;padding:14px;border:0;border-radius:10px;background:#176b57;color:#fff;font-size:17px;font-weight:700;cursor:pointer}
+button:disabled{opacity:.6}.photo{border:2px dashed #cfd5dc;padding:16px;border-radius:12px;text-align:center}
+.preview{display:none;max-width:180px;max-height:180px;margin:12px auto 0;border-radius:12px;object-fit:cover}
+.notice{font-size:12px;color:#667085;line-height:1.45;margin-top:16px}.ok,.error{display:none;margin-top:16px;padding:13px;border-radius:10px}.ok{background:#ecfdf3;color:#067647}.error{background:#fef3f2;color:#b42318}
+.required{color:#b42318}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+<div class="header">
+<h1>REGISTRO DE TRABAJADORES</h1>
+<p>SNTSA · Sección 35 Oaxaca</p>
+</div>
+<form id="form">
+<label>Nombre completo <span class="required">*</span></label>
+<input name="nombre" required autocomplete="name">
+
+<label>Puesto <span class="required">*</span></label>
+<input name="puesto" required>
+
+<label>Grupo sanguíneo <span class="required">*</span></label>
+<select name="sangre" required>
+<option value="">Selecciona...</option><option>A+</option><option>A−</option><option>B+</option><option>B−</option>
+<option>AB+</option><option>AB−</option><option>O+</option><option>O−</option>
+<option>No sé / No identificado</option>
+</select>
+
+<label>Alergias</label>
+<textarea name="alergias" placeholder="Escribe las alergias o indica 'Ninguna'."></textarea>
+
+<label>Contacto de emergencia <span class="required">*</span></label>
+<textarea name="emergencia" required placeholder="Nombre, parentesco y teléfono"></textarea>
+
+<label>Delegación o Subsección <span class="required">*</span></label>
+<input name="delegacion" required>
+
+<label>Fotografía <span class="required">*</span></label>
+<div class="photo">
+<input id="foto" name="foto" type="file" accept="image/*" capture="environment" required>
+<img id="preview" class="preview" alt="Vista previa">
+<div class="help">Puedes tomar la fotografía directamente con el celular o seleccionar una existente.</div>
+</div>
+
+<div class="notice">
+Al enviar, la información será utilizada para el registro correspondiente. Antes de publicar el formulario deberá incorporarse el aviso de privacidad institucional aplicable.
+</div>
+
+<button id="btn" type="submit">ENVIAR REGISTRO</button>
+<div id="ok" class="ok"></div><div id="error" class="error"></div>
+</form></div></div>
+<script>
+const foto=document.getElementById('foto'), preview=document.getElementById('preview');
+foto.addEventListener('change',()=>{const f=foto.files[0]; if(f){preview.src=URL.createObjectURL(f);preview.style.display='block'}});
+const form=document.getElementById('form'), btn=document.getElementById('btn');
+const ok=document.getElementById('ok'), error=document.getElementById('error');
+
+// Coloca aquí la URL de tu Web App de Google Apps Script después de publicarla.
+const API_URL = "https://script.google.com/macros/s/AKfycbzSaugMudccjU8jxE9Ieh-T6UYhPKjWiDEFZW0I77u4QDKZWgj491BxswmJukNftlohPg/exec";
+
+form.addEventListener('submit', async e=>{
+ e.preventDefault(); ok.style.display='none'; error.style.display='none';
+ if(API_URL.startsWith("PEGA_")){error.textContent="El formulario está listo, pero falta conectar la URL del sistema.";error.style.display='block';return}
+ const f=foto.files[0]; if(!f){error.textContent="Selecciona una fotografía.";error.style.display='block';return}
+ btn.disabled=true; btn.textContent="ENVIANDO...";
+ try{
+   const data={nombre:form.nombre.value,puesto:form.puesto.value,sangre:form.sangre.value,
+   alergias:form.alergias.value,emergencia:form.emergencia.value,delegacion:form.delegacion.value,
+   fotoNombre:f.name,fotoTipo:f.type,fotoBase64:await toBase64(f)};
+   const r=await fetch(API_URL,{method:"POST",body:JSON.stringify(data)});
+   const j=await r.json();
+   if(!j.ok) throw new Error(j.error||"No se pudo guardar");
+   form.reset(); preview.style.display='none';
+   ok.textContent="Registro enviado correctamente. Folio: "+j.folio;
+   ok.style.display='block';
+ }catch(err){error.textContent="No fue posible enviar el registro: "+err.message;error.style.display='block'}
+ finally{btn.disabled=false;btn.textContent="ENVIAR REGISTRO"}
+});
+function toBase64(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result.split(",")[1]);r.onerror=reject;r.readAsDataURL(file)})}
+</script>
+</body></html>
