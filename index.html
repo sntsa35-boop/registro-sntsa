@@ -8,7 +8,11 @@
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f5f7;color:#1d2939}
 .wrap{max-width:760px;margin:24px auto;padding:16px}.card{background:white;border-radius:18px;padding:26px;box-shadow:0 8px 30px #00000012}
 .header{text-align:center;border-bottom:3px solid #176b57;padding-bottom:18px;margin-bottom:22px}
+.logos{display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:12px}
+.logo-sntsa{width:92px;height:92px;object-fit:contain}
+.logo-lema{width:260px;max-width:55%;height:auto;object-fit:contain}
 .header h1{margin:8px 0 4px;font-size:24px}.header p{margin:0;color:#667085}
+@media(max-width:560px){.logos{gap:12px}.logo-sntsa{width:72px;height:72px}.logo-lema{width:190px;max-width:62%}.header h1{font-size:21px}}
 label{display:block;font-weight:700;margin:17px 0 7px}input,select,textarea{width:100%;padding:13px 14px;border:1px solid #cfd5dc;border-radius:10px;font-size:16px;background:#fff}
 textarea{min-height:90px;resize:vertical}.help{font-size:13px;color:#667085;margin-top:5px}
 button{width:100%;margin-top:24px;padding:14px;border:0;border-radius:10px;background:#176b57;color:#fff;font-size:17px;font-weight:700;cursor:pointer}
@@ -21,6 +25,10 @@ button:disabled{opacity:.6}.photo{border:2px dashed #cfd5dc;padding:16px;border-
 <body>
 <div class="wrap"><div class="card">
 <div class="header">
+<div class="logos">
+<img class="logo-sntsa" src="logo-sntsa.png" alt="SNTSA">
+<img class="logo-lema" src="logo-un-sindicato.png" alt="Un Sindicato para Todos">
+</div>
 <h1>REGISTRO DE TRABAJADORES</h1>
 <p>SNTSA · Sección 35 Oaxaca</p>
 </div>
